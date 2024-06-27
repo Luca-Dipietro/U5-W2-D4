@@ -1,5 +1,7 @@
 package lucadipietro.U5_W2_D4.services;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import lucadipietro.U5_W2_D4.entities.Autore;
 import lucadipietro.U5_W2_D4.exceptions.BadRequestException;
 import lucadipietro.U5_W2_D4.exceptions.NotFoundException;
@@ -10,7 +12,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.UUID;
 
@@ -18,6 +22,8 @@ import java.util.UUID;
 public class AutoriService {
     @Autowired
     private AutoriRepository autoriRepository;
+    @Autowired
+    private Cloudinary cloudinaryUploader;
 
     Random rnd = new Random();
 
@@ -54,5 +60,9 @@ public class AutoriService {
     public void findByIdAndDelete(UUID autoreId) {
         Autore found = this.findById(autoreId);
         this.autoriRepository.delete(found);
+    }
+
+    public String uploadImage(MultipartFile file) throws IOException {
+        return (String) cloudinaryUploader.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
     }
 }
